@@ -1,0 +1,114 @@
+<div class="h-full w-full">
+    <div class="pt-3">
+        <p-table
+            #dt
+            [value]="data"
+            [dataKey]="dataKey"
+            [rows]="rows"
+            [loading]="loading"
+            [rowHover]="true"
+            [showGridlines]="true"
+            [paginator]="true"
+            [rowsPerPageOptions]="rowsPerPageOptions"
+            [globalFilterFields]="globalFilterFields"
+            [scrollable]="true"
+            [tableStyle]="{ 'min-width': minWidth }"
+            responsiveLayout="scroll"
+        >
+            <ng-template #caption>
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 w-full">
+                    <p-iconfield iconPosition="left">
+                        <p-inputicon>
+                            <i class="pi pi-search"></i>
+                        </p-inputicon>
+                        <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Buscar..." aria-label="Buscar en la tabla" />
+                    </p-iconfield>
+
+                    <!-- DERECHA: Botones -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <!-- Botón AGREGAR Independiente -->
+                        @if (showAddButton) {
+                            <ui-button label="Agregar" icon="pi pi-plus" (buttonClick)="onAddClick()" />
+                        }
+                        <!-- Bloque de botones adicionales -->
+                        @if (headerButtons && headerButtons.length) {
+                            @for (btn of headerButtons; track btn.key ?? btn.label) {
+                                @if (btn.visible !== false) {
+                                    <ui-button [label]="btn.label" [icon]="btn.icon" [severity]="btn.severity || 'secondary'" [outlined]="btn.outlined ?? false" [disabled]="btn.disabled ?? false" (buttonClick)="onHeaderButtonClick(btn)" />
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #header>
+                <tr>
+                    @for (col of columns; track col.field; let i = $index) {
+                        <th
+                            scope="col"
+                            [pSortableColumn]="col.sortable ? toField(col.field) : undefined"
+                            [style.width]="col.width || null"
+                            [style.min-width]="col.width || '10rem'"
+                            [class]="col.frozen ? 'sticky z-20 bg-surface-0! dark:bg-surface-900! shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
+                            [style.left]="col.frozen ? getFrozenLeftOffset(i) : null"
+                            [style.background-color]="col.frozen ? 'var(--surface-100)' : null"
+                            class="py-6!"
+                        >
+                            <div class="flex justify-between items-center">
+                                {{ col.header }}
+                                @if (col.sortable) {
+                                    <p-sortIcon [field]="toField(col.field)" />
+                                }
+                            </div>
+                        </th>
+                    }
+
+                    @if (showActions) {
+                        <th scope="col" class="sticky right-0 z-20" [style.background-color]="'var(--surface-100)'" [style.width]="actionsWidth" [style.min-width]="actionsWidth">Acciones</th>
+                    }
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-row>
+                <tr>
+                    @for (col of columns; track col.field; let i = $index) {
+                        <td
+                            [class]="col.frozen ? 'sticky z-10 shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
+                            [style.left]="col.frozen ? getFrozenLeftOffset(i) : null"
+                            [style.background-color]="col.frozen ? 'var(--surface-card)' : null"
+                        >
+                            @if (col.type === 'tag') {
+                                <p-tag [value]="getTagData(col, row).value" [severity]="getTagData(col, row).severity" />
+                            } @else if (col.type === 'custom' && col.cellTemplate) {
+                                <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }" />
+                            } @else {
+                                {{ getNestedValue(row, toField(col.field)) }}
+                            }
+                        </td>
+                    }
+
+                    @if (showActions) {
+                        <td class="sticky right-0 z-10" [style.background-color]="'var(--surface-card)'">
+                            <div class="flex items-center justify-center gap-1">
+                                @for (btn of rowButtons; track btn.key) {
+                                    @if (isVisible(btn.visible, row)) {
+                                        <ui-button [icon]="btn.icon" [rounded]="true" [text]="true" [disabled]="isDisabled(btn.disabled, row)" (buttonClick)="onRowAction(btn.key, row)" />
+                                    }
+                                }
+                            </div>
+                        </td>
+                    }
+                </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td [attr.colspan]="columns.length + (showActions ? 1 : 0)" class="py-6 text-center">
+                        {{ emptyMessage }}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+export enum EnumModule {
+    CLIENTES = 'CLIENTES',
+    INVERSIONISTAS = 'INVERSIONISTAS',
+    USUARIOS = 'USUARIOS',
+    ACCIONES = 'ACCION',
+    MODULOS = 'MODULO',
+    ROLES = 'ROLES'
+}

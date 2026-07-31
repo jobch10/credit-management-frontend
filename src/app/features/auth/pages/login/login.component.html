@@ -1,0 +1,25 @@
+<div class="text-center mb-8">
+    <div class="mb-6 flex justify-center">
+        <img src="assets/images/public/logo.png" alt="Logo de la empresa" class="h-16 w-auto object-contain" />
+    </div>
+    <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">¡Bienvenido a Alpha Financial!</div>
+    <span class="text-muted-color font-medium"> Inicia sesión para continuar</span>
+</div>
+
+<div [formGroup]="formLogin">
+    <div class="mb-8 text-xl font-medium">
+        <input-text label="Correo electrónico" placeholder="correo@empresa.com" type="email" [required]="true" formControlName="email" [next]="password"></input-text>
+    </div>
+    <div class="mb-4 text-xl font-medium">
+        <input-password #password id="password" label="Contraseña" placeholder="••••••••" [required]="true" formControlName="password" [toggleMask]="true" [feedback]="false" [next]="button"></input-password>
+    </div>
+
+    <div class="flex items-center justify-between mt-2 mb-8 gap-8">
+        <div class="flex items-center">
+            <p-checkbox id="rememberme" binary class="mr-2" formControlName="rememberme"></p-checkbox>
+            <label for="rememberme">Recordarme</label>
+        </div>
+        <!-- <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span> -->
+    </div>
+    <ui-button #button label="Ingresar" styleClass="w-full" type="button" (buttonClick)="login()" [disabled]="isLoading()" [loading]="isLoading()"></ui-button>
+</div>

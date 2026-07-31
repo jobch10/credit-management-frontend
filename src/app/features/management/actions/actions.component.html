@@ -1,0 +1,15 @@
+<div class="card card-full">
+    <page-header [title]="module()?.name" [subtitle]="subtitle" [icon]="module()?.icon"> </page-header>
+    <ui-table-customizable
+        [data]="data()"
+        [columns]="columns"
+        [rowButtons]="rowButtons"
+        [globalFilterFields]="globalFilterFields"
+        [showAddButton]="true"
+        [loading]="loading()"
+        [dataKey]="dataKey"
+        [showActions]="true"
+        (headerButtonClick)="onHeaderButtonClick($event)"
+        (rowAction)="onRowAction($event)"
+    />
+</div>

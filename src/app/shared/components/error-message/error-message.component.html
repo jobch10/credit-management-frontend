@@ -1,0 +1,21 @@
+@if (validatorMessage && isInvalid) {
+    @if (controls?.errors?.required) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El campo {{ label }} es requerido. </p-message>
+    } @else if (controls?.errors?.minlength) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El campo {{ label }} requiere {{ controls.errors.minlength.requiredLength }} caracteres mínimo. </p-message>
+    } @else if (controls?.errors?.maxlength) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El campo {{ label }} requiere {{ controls.errors.maxlength.requiredLength }} caracteres máximo. </p-message>
+    } @else if (controls?.errors?.pattern) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El campo {{ label }} tiene formato incorrecto. </p-message>
+    } @else if (controls?.errors?.email) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El correo no tiene un formato válido. </p-message>
+    } @else if (controls?.errors?.min) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El valor mínimo es {{ controls.errors.min.min }}. </p-message>
+    } @else if (controls?.errors?.max) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1"> El valor máximo es {{ controls.errors.max.max }}. </p-message>
+    } @else if (controls?.errors?.customValidator) {
+        <p-message severity="error" size="small" variant="simple" styleClass="mt-1">
+            {{ controls.errors.customValidator.message }}
+        </p-message>
+    }
+}
