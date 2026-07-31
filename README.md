@@ -1,59 +1,85 @@
-# Sakai19
+# Credit Management Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.
+Frontend application for credit management developed with Angular 21, PrimeNG 21 and Tailwind CSS 4.1.
 
-## Development server
+## Overview
 
-To start a local development server, run:
+Credit Management Frontend is a web application designed for managing credit-related processes through a modern and responsive user interface.
+
+The project is built using Angular with a component-based architecture, reusable modules, and modern frontend practices.
+
+## Technologies
+
+- Angular 21
+- PrimeNG 21
+- Tailwind CSS 4.1
+- TypeScript
+- SCSS
+- RxJS
+
+## Requirements
+
+Before running the project, make sure you have installed:
+
+- Node.js
+- Angular CLI 21
+
+Verify the installed versions:
+
+```bash
+node --version
+ng version
+```
+
+## Installation
+
+Install project dependencies:
+
+```bash
+npm install
+```
+
+## Development Server
+
+Run the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Once the server is running, open your browser and navigate to:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:4200/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The application will automatically reload whenever source files are modified.
 
-```bash
-ng generate --help
-```
+## Production Build
 
-## Building
-
-To build the project run:
+Generate a production build:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The generated files will be stored in the `dist/` directory.
 
-## Running unit tests
+## Project Structure
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```text
+src/
+├── app/
+│   ├── core/          # Core services and application configuration
+│   ├── features/      # Business features and modules
+│   ├── shared/        # Shared components and utilities
+│   └── layout/        # Application layout components
+│
+└── assets/            # Images, styles and static resources
 ```
 
-## Running end-to-end tests
+## License
 
-For end-to-end (e2e) testing, run:
+This project includes code based on Sakai Angular Template by PrimeTek, licensed under the MIT License.
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Custom application code developed for Credit Management Frontend belongs to the project author.
