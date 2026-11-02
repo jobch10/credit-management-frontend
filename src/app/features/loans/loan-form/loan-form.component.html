@@ -1,0 +1,81 @@
+<div class="card card-full flex flex-col">
+    <page-header title="Crédito" [subtitle]="description()" [icon]="iconClass()" />
+
+    <form [formGroup]="form" class="flex flex-col flex-1">
+        <p-fieldset legend="Datos del Crédito">
+            <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                <div class="flex flex-col gap-2">
+                    <input-text #loanNumber label="N° Crédito" [required]="true" formControlName="loanNumber" [next]="borrowerSubjectId" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <input-select #borrowerSubjectId label="Prestatario" [required]="true" formControlName="borrowerSubjectId" [options]="borrowers()" optionLabel="person.firstName" optionValue="id" [back]="loanNumber" [next]="principalAmount" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <ui-input-number #principalAmount label="Monto (S/)" [required]="true" formControlName="principalAmount" mode="currency" currency="PEN" [min]="1" [back]="borrowerSubjectId" [next]="interestRate" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <ui-input-number #interestRate label="Tasa Anual (%)" [required]="true" formControlName="interestRate" [min]="0" [max]="100" [maxFractionDigits]="2" [back]="principalAmount" [next]="termMonths" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <ui-input-number #termMonths label="Plazo (meses)" [required]="true" formControlName="termMonths" [min]="1" [back]="interestRate" [next]="paymentFrequency" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <input-select #paymentFrequency label="Frecuencia de pago" [required]="true" formControlName="paymentFrequency" [options]="frequencyOptions" optionLabel="label" optionValue="value" [back]="termMonths" [next]="startDate" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <ui-date-picker #startDate label="Fecha de inicio" [required]="true" formControlName="startDate" [back]="paymentFrequency" [next]="guaranteeType" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <input-select #guaranteeType label="Tipo de garantía" formControlName="guaranteeType" [options]="guaranteeOptions" optionLabel="label" optionValue="value" [back]="startDate" [next]="guaranteeDescription" />
+                </div>
+                <div class="flex flex-col gap-2 md:col-span-3">
+                    <input-text #guaranteeDescription label="Descripción de garantía" formControlName="guaranteeDescription" [back]="guaranteeType" [next]="notes" />
+                </div>
+                <div class="flex flex-col gap-2 md:col-span-3">
+                    <input-text #notes label="Observaciones" formControlName="notes" [back]="guaranteeDescription" [next]="investorSubjectId" />
+                </div>
+            </div>
+        </p-fieldset>
+
+        <p-fieldset legend="Inversionista">
+            <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                <div class="flex flex-col gap-2">
+                    <input-select #investorSubjectId label="Inversionista" [required]="true" formControlName="investorSubjectId" [options]="investors()" optionLabel="person.firstName" optionValue="id" [back]="notes" [next]="expectedRate" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <ui-input-number #expectedRate label="Tasa esperada (%)" formControlName="expectedRate" [min]="0" [max]="100" [maxFractionDigits]="2" [back]="investorSubjectId" />
+                </div>
+            </div>
+        </p-fieldset>
+
+        <div class="flex justify-end mt-4">
+            <p-button label="Calcular cuota" icon="pi pi-calculator" [loading]="calculating()" (onClick)="calcular()" />
+        </div>
+
+        <p-fieldset legend="Resumen del crédito" *ngIf="calculated() as c">
+            <div class="grid grid-cols-2 gap-5 md:grid-cols-4 mt-3">
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">Cuota mensual</span>
+                    <span class="text-lg font-bold">{{ formatCurrency(c.monthlyPayment) }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">Interés total</span>
+                    <span class="text-lg font-bold">{{ formatCurrency(c.totalInterest) }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">Total a pagar</span>
+                    <span class="text-lg font-bold">{{ formatCurrency(c.totalToPay) }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">Fecha fin</span>
+                    <span class="text-lg font-bold">{{ c.endDate }}</span>
+                </div>
+            </div>
+        </p-fieldset>
+    </form>
+
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button label="Guardar" icon="pi pi-save" [loading]="saving()" (onClick)="save()" />
+    </div>
+</div>

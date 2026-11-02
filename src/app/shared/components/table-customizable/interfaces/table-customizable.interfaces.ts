@@ -14,14 +14,22 @@ export interface TableTagData {
     severity: EnumTagSeverity;
 }
 
+export interface TableIconData {
+    icon: string;
+    severity: EnumTagSeverity;
+}
+
 export interface TableColumn<T> {
     field: keyof T | string;
     header: string;
+    type?: 'text' | 'tag' | 'icon' | 'custom';
     sortable?: boolean;
+    minWidth?: string;
+    maxWidth?: string;
     width?: string;
-    frozen?: boolean; // fija la columna a la izquierda
-    type?: 'text' | 'tag' | 'custom';
+    frozen?: boolean;
     tagConfig?: (row: T) => TableTagData;
+    iconConfig?: (row: T) => TableIconData;
     severityMap?: Record<string, EnumTagSeverity>;
     cellTemplate?: TemplateRef<any>;
 }
@@ -29,7 +37,7 @@ export interface TableColumn<T> {
 export interface TableRowButton<T> {
     key: string;
     icon: string;
-    color?: string;
+    severity?: 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast' | undefined;
     tooltip?: string;
     visible?: boolean | ((row: T) => boolean);
     disabled?: boolean | ((row: T) => boolean);

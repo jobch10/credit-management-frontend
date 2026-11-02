@@ -1,0 +1,30 @@
+<p-dialog [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true" [closeOnEscape]="true" [style]="{ width: '450px' }" [header]="title()">
+    <form [formGroup]="form" class="p-2">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div class="flex flex-col gap-2">
+                <input-text #code label="Código" [required]="true" [submitted]="submitted()" formControlName="code" [next]="name" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #name label="Nombre" [required]="true" [submitted]="submitted()" formControlName="name" [back]="code" [next]="icon" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #icon label="Icono" [required]="true" [submitted]="submitted()" formControlName="icon" placeholder="pi pi-pencil" [back]="name" [next]="color" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select #color label="Color" [required]="true" [submitted]="submitted()" formControlName="color" [options]="colorOptions" optionLabel="label" optionValue="value" [back]="icon" [next]="state" [filter]="false" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select #state label="Estado" [required]="true" [submitted]="submitted()" formControlName="state" [options]="stateOptions" optionLabel="label" optionValue="value" [back]="color" [filter]="false" />
+            </div>
+        </div>
+    </form>
+
+    <ng-template #footer>
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button [label]="isEdit() ? 'Actualizar' : 'Guardar'" icon="pi pi-check" [loading]="saving()" (onClick)="save()" />
+    </ng-template>
+</p-dialog>

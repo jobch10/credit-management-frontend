@@ -6,6 +6,7 @@ import { ButtonModule, ButtonSeverity } from 'primeng/button';
     imports: [ButtonModule],
     template: `<p-button
         #btn
+        [size]="size"
         [label]="label"
         [icon]="icon"
         [iconPos]="iconPos"
@@ -25,6 +26,7 @@ export class ButtonComponent {
     @ViewChild('btn', { read: ElementRef }) btnRef!: ElementRef<HTMLElement>;
 
     @Input() label?: string;
+    @Input() size: 'small' | 'large' | undefined = undefined;
     @Input() icon?: string;
     @Input() iconPos: 'left' | 'right' = 'left';
     @Input() severity?: ButtonSeverity;

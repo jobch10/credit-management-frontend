@@ -1,0 +1,30 @@
+<p-dialog [(visible)]="visible" [header]="typeDocument ? 'Editar Tipo de Documento' : 'Agregar Tipo de Documento'" [modal]="true" [closable]="false" [style]="{ width: '500px' }" [breakpoints]="{ '960px': '50vw', '640px': '90vw' }" (onHide)="close()">
+    <form [formGroup]="form" class="p-fluid grid grid-cols-2 gap-5 p-4">
+        <div class="field col-span-1">
+            <label for="code" class="font-bold text-surface-900 dark:text-surface-0 mb-2">Código</label>
+            <input id="code" type="text" pInputText formControlName="code" placeholder="EJ: DNI" [ngClass]="{ 'ng-invalid ng-dirty': form.get('code')?.invalid && form.get('code')?.touched }" />
+            <small class="p-error" *ngIf="form.get('code') as codeControl">
+                <ng-container *ngIf="codeControl.invalid && codeControl.touched">
+                    <span *ngIf="codeControl.errors?.['required']">El código es requerido.</span>
+                    <span *ngIf="codeControl.errors?.['maxlength']">Máximo 10 caracteres.</span>
+                </ng-container>
+            </small>
+        </div>
+
+        <div class="field col-span-1">
+            <label for="name" class="font-bold text-surface-900 dark:text-surface-0 mb-2">Nombre</label>
+            <input id="name" type="text" pInputText formControlName="name" placeholder="EJ: Documento de Identidad" [ngClass]="{ 'ng-invalid ng-dirty': form.get('name')?.invalid && form.get('name')?.touched }" />
+            <small class="p-error" *ngIf="form.get('name') as nameControl">
+                <ng-container *ngIf="nameControl.invalid && nameControl.touched">
+                    <span *ngIf="nameControl.errors?.['required']">El nombre es requerido.</span>
+                    <span *ngIf="nameControl.errors?.['maxlength']">Máximo 50 caracteres.</span>
+                </ng-container>
+            </small>
+        </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (click)="close()"></p-button>
+        <p-button label="Guardar" icon="pi pi-check" (click)="onSave()" [disabled]="form.invalid || loading" [loading]="loading"></p-button>
+    </ng-template>
+</p-dialog>

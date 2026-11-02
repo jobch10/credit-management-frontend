@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, forwardRef, Input, OnChanges, Output, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, forwardRef, input, output, viewChild, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ErrorMessageComponent } from '../error-message/error-message.component';
@@ -23,29 +23,32 @@ import { ErrorMessageComponent } from '../error-message/error-message.component'
     encapsulation: ViewEncapsulation.None
 })
 export class InputTextComponent implements OnChanges {
-    @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>;
+    inputEl = viewChild<ElementRef<HTMLInputElement>>('inputEl');
 
-    @Input() id: string = '';
-    @Input() label: string | null = null;
-    @Input() showLabel: boolean = true;
-    @Input() placeholder: string = '';
-    @Input() autocomplete: string = 'off';
-    @Input() required: boolean = false;
-    @Input() disabled: boolean = false;
-    @Input() readonly: boolean = false;
-    @Input() setNgClass: string = '';
-    @Input() validatorMessage: boolean = true;
-    @Input() submitted: boolean = false;
-    @Input() next: any;
-    @Input() nextIsDisable: any;
-    @Input() back: any;
-    @Input() backIsDisable: any;
-    @Input() size: 'small' | 'large' = 'large';
+    // ---- Inputs (signals) ----
+    id = input<string>('');
+    label = input<string | null>(null);
+    showLabel = input<boolean>(true);
+    placeholder = input<string>('');
+    autocomplete = input<string>('off');
+    required = input<boolean>(false);
+    disabled = input<boolean>(false);
+    readonly = input<boolean>(false);
+    setNgClass = input<string>('');
+    validatorMessage = input<boolean>(true);
+    submitted = input<boolean>(false);
+    next = input<any>(undefined);
+    nextIsDisable = input<any>(undefined);
+    back = input<any>(undefined);
+    backIsDisable = input<any>(undefined);
+    size = input<'small' | 'large'>('large');
 
-    @Output() change = new EventEmitter<string | null>();
-    @Output() blur = new EventEmitter<string | null>();
-    @Output() onNext = new EventEmitter<void>();
-    @Output() onBack = new EventEmitter<void>();
+    // ---- Outputs ----
+    change = output<string | null>();
+    blur = output<string | null>();
+    onNext = output<void>();
+    onBack = output<void>();
+    onEnter = output<string | null>();
 
     controls: AbstractControl | null = null;
 
@@ -58,7 +61,7 @@ export class InputTextComponent implements OnChanges {
     onValidationChange = () => {};
 
     get isDisabled(): boolean {
-        return this.disabled || this.disabledFromCva;
+        return this.disabled() || this.disabledFromCva;
     }
 
     get isInvalid(): boolean {
@@ -67,7 +70,7 @@ export class InputTextComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['submitted'] && this.controls && changes['submitted'].currentValue) {
+        if (changes['submitted'] && this.controls && this.submitted()) {
             this.controls.markAsDirty();
             this.controls.markAsTouched();
         }
@@ -106,7 +109,7 @@ export class InputTextComponent implements OnChanges {
     // ---- Eventos ----
 
     focus(): void {
-        this.inputEl?.nativeElement?.focus();
+        this.inputEl()?.nativeElement?.focus();
     }
 
     onInput(val: string): void {
@@ -122,28 +125,44 @@ export class InputTextComponent implements OnChanges {
         this.blur.emit(val ?? null);
     }
 
+    // ---- Helper para leer disabled/readonly sin importar si es signal o propiedad plana ----
+    private isFieldBlocked(field: any): boolean {
+        if (!field) return false;
+        const dis = typeof field.disabled === 'function' ? field.disabled() : field.disabled;
+        const ro = typeof field.readonly === 'function' ? field.readonly() : field.readonly;
+        return !!dis || !!ro;
+    }
+
     enterKeyUp(): void {
-        if (this.next != undefined) {
-            if (this.next.disabled || this.next.readonly) {
-                if (this.nextIsDisable != undefined) this.nextIsDisable.focus();
+        const next = this.next();
+        const nextIsDisable = this.nextIsDisable();
+
+        this.onEnter.emit(this.value);
+
+        if (next != undefined) {
+            if (this.isFieldBlocked(next)) {
+                if (nextIsDisable != undefined) nextIsDisable.focus();
             } else {
-                this.next.focus();
+                next.focus();
             }
         } else {
-            if (this.nextIsDisable != undefined) this.nextIsDisable.focus();
+            if (nextIsDisable != undefined) nextIsDisable.focus();
             else this.onNext.emit();
         }
     }
 
     arrowLeftKeyUp(): void {
-        if (this.back != undefined) {
-            if (this.back.disabled || this.back.readonly) {
-                if (this.backIsDisable != undefined) this.backIsDisable.focus();
+        const back = this.back();
+        const backIsDisable = this.backIsDisable();
+
+        if (back != undefined) {
+            if (this.isFieldBlocked(back)) {
+                if (backIsDisable != undefined) backIsDisable.focus();
             } else {
-                this.back.focus();
+                back.focus();
             }
         } else {
-            if (this.backIsDisable != undefined) this.backIsDisable.focus();
+            if (backIsDisable != undefined) backIsDisable.focus();
             else this.onBack.emit();
         }
     }

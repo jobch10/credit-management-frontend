@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../models';
-import { DocumentFile, TypeDocument } from '../../shared/interfaces/person';
+import { DocumentFile, TypeDocument } from '../../shared/interfaces/actors';
 
 @Injectable({
   providedIn: 'root',

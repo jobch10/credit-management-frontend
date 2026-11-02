@@ -11,7 +11,7 @@ import { AppMenuitem } from './app.menuitem';
     template: `<ul class="layout-menu">
         @for (item of model; track item.label) {
             @if (!item.separator) {
-                <li app-menuitem [item]="item" [root]="true"></li>
+                <li sk-menuitem [item]="item" [root]="true"></li>
             } @else {
                 <li class="menu-separator"></li>
             }

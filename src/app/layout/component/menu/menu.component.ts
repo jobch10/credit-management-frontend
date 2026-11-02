@@ -16,7 +16,6 @@ export class MenuComponent {
 
     readonly model = computed<MenuItem[]>(() => {
         const permissionModules = this._store.permissionModules() ?? [];
-        console.log('permissionModules', permissionModules);
         return permissionModules.filter((m) => m.state).map((m) => this.toMenuItem(m));
     });
 

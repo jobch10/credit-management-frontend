@@ -1,0 +1,153 @@
+<div class="card card-full flex flex-col">
+    <page-header title="Prestatario" [subtitle]="description()" [icon]="iconClass()" />
+
+    <form [formGroup]="form" class="flex flex-col flex-1">
+        <p-tabs [value]="0">
+            <p-tablist>
+                <p-tab [value]="0">Datos Principales</p-tab>
+                <p-tab [value]="1">Datos Económicos</p-tab>
+                <p-tab [value]="2">Evaluación</p-tab>
+            </p-tablist>
+
+            <p-tabpanels>
+                <!-- TAB 0 -->
+                <p-tabpanel [value]="0">
+                    <p-fieldset legend="Identificación">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #dni label="DNI" [required]="true" formControlName="dni" [next]="firstName" (onEnter)="obtenerDatos()" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Datos Personales">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #firstName label="Nombres" [required]="true" formControlName="firstName" [back]="dni" [next]="lastName" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #lastName label="Apellidos" [required]="true" formControlName="lastName" [back]="firstName" [next]="birthDate" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-date-picker #birthDate label="Fecha de Nacimiento" [required]="true" formControlName="birthDate" [back]="lastName" [next]="maritalStatus" [maxDate]="today" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #maritalStatus label="Estado Civil" [required]="true" formControlName="maritalStatus" [options]="maritalStatusOptions" optionLabel="label" optionValue="value" [back]="birthDate" [next]="phoneNumber" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Datos de Contacto">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #phoneNumber label="Teléfono" formControlName="phoneNumber" [back]="maritalStatus" [next]="email" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #email label="Correo Electrónico" formControlName="email" [back]="phoneNumber" [next]="address" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #address label="Dirección" [required]="true" formControlName="address" [back]="email" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Estado">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-select label="Estado" [required]="true" formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </p-tabpanel>
+
+                <!-- TAB 1 -->
+                <p-tabpanel [value]="1">
+                    <p-fieldset legend="Situación Familiar">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #dependentsCount label="Dependientes Económicos" [required]="true" formControlName="dependentsCount" [min]="0" [next]="housingType" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #housingType label="Tipo de Vivienda" [required]="true" formControlName="housingType" [options]="housingTypeOptions" optionLabel="label" optionValue="value" [back]="dependentsCount" [next]="occupation" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Situación Laboral">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #occupation label="Ocupación" formControlName="occupation" [back]="housingType" [next]="employer" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #employer label="Empleador / Empresa" formControlName="employer" [back]="occupation" [next]="workSeniorityMonths" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #workSeniorityMonths label="Antigüedad Laboral (meses)" formControlName="workSeniorityMonths" [min]="0" [back]="employer" [next]="employmentType" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #employmentType label="Tipo de Empleo" formControlName="employmentType" [options]="employmentTypeOptions" optionLabel="label" optionValue="value" [back]="workSeniorityMonths" [next]="monthlyIncome" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Ingresos y Gastos">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #monthlyIncome label="Ingreso Mensual (S/)" [required]="true" formControlName="monthlyIncome" mode="currency" currency="PEN" [min]="0" [back]="employmentType" [next]="fixedExpenses" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #fixedExpenses label="Gastos Fijos (S/)" [required]="true" formControlName="fixedExpenses" mode="currency" currency="PEN" [min]="0" [back]="monthlyIncome" [next]="externalDebtPayments" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #externalDebtPayments label="Pago de Deudas Externas (S/)" [required]="true" formControlName="externalDebtPayments" mode="currency" currency="PEN" [min]="0" [back]="fixedExpenses" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </p-tabpanel>
+
+                <p-tabpanel [value]="2">
+                    <p-fieldset legend="Verificación Externa">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-select #infocorpStatus label="Estado en Infocorp" formControlName="infocorpStatus" [options]="infocorpStatusOptions" optionLabel="label" optionValue="value" [next]="infocorpScore" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #infocorpScore label="Score Infocorp (0-999)" formControlName="infocorpScore" [min]="0" [max]="999" [back]="infocorpStatus" [next]="hasPoliceRecords" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #hasPoliceRecords label="Antecedentes Policiales" formControlName="hasPoliceRecords" [options]="yesNoOptions" optionLabel="label" optionValue="value" [next]="hasJudicialRecords" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #hasJudicialRecords label="Antecedentes Judiciales" formControlName="hasJudicialRecords" [options]="yesNoOptions" optionLabel="label" optionValue="value" [next]="hasCriminalRecords" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #hasCriminalRecords label="Antecedentes Penales" formControlName="hasCriminalRecords" [options]="yesNoOptions" optionLabel="label" optionValue="value" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <div class="flex justify-end gap-3 mt-4">
+                        <p-button label="Evaluar Crédito" icon="pi pi-calculator" [loading]="evaluating()" (onClick)="evaluarCredito()" />
+                    </div>
+
+                    <p-fieldset legend="Resultado">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <label class="font-medium">Score</label>
+                                <span class="text-2xl font-bold">{{ form.get('creditScore')?.value }}</span>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="font-medium">Nivel de Riesgo</label>
+                                <span class="text-2xl font-bold">{{ form.get('riskLevel')?.value ?? '—' }}</span>
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    </form>
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button label="Guardar" icon="pi pi-save" [loading]="saving()" (onClick)="save()" />
+    </div>
+</div>

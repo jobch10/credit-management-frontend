@@ -5,7 +5,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { AppMenu } from './app.menu';
 
 @Component({
-    selector: 'app-sidebar',
+    selector: 'sk-sidebar',
     standalone: true,
     imports: [AppMenu, RouterModule],
     template: `
@@ -105,11 +105,6 @@ export class AppSidebar implements OnInit, OnDestroy {
         const topbarButtonEl = document.querySelector('.topbar-start > button');
         const sidebarEl = this.el.nativeElement;
 
-        return !(
-            sidebarEl?.isSameNode(event.target as Node) ||
-            sidebarEl?.contains(event.target as Node) ||
-            topbarButtonEl?.isSameNode(event.target as Node) ||
-            topbarButtonEl?.contains(event.target as Node)
-        );
+        return !(sidebarEl?.isSameNode(event.target as Node) || sidebarEl?.contains(event.target as Node) || topbarButtonEl?.isSameNode(event.target as Node) || topbarButtonEl?.contains(event.target as Node));
     }
 }

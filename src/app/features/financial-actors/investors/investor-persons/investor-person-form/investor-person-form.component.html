@@ -1,0 +1,108 @@
+<div class="card card-full flex flex-col">
+    <page-header title="Inversionista" [subtitle]="description()" [icon]="iconClass()" />
+
+    <form [formGroup]="form" class="flex flex-col flex-1">
+        <p-tabs [value]="0">
+            <p-tablist>
+                <p-tab [value]="0">Datos Principales</p-tab>
+                <p-tab [value]="1">Datos de Inversión</p-tab>
+            </p-tablist>
+
+            <p-tabpanels>
+                <!-- TAB 0 -->
+                <p-tabpanel [value]="0">
+                    <p-fieldset legend="Identificación">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #dni label="DNI" [required]="true" formControlName="dni" [next]="firstName" (onEnter)="obtenerDatos()" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Datos Personales">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #firstName label="Nombres" [required]="true" formControlName="firstName" [back]="dni" [next]="lastName" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #lastName label="Apellidos" [required]="true" formControlName="lastName" [back]="firstName" [next]="birthDate" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-date-picker #birthDate label="Fecha de Nacimiento" [required]="true" formControlName="birthDate" [back]="lastName" [next]="maritalStatus" [maxDate]="today" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #maritalStatus label="Estado Civil" [required]="true" formControlName="maritalStatus" [options]="maritalStatusOptions" optionLabel="label" optionValue="value" [back]="birthDate" [next]="phoneNumber" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Datos de Contacto">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #phoneNumber label="Teléfono" formControlName="phoneNumber" [back]="maritalStatus" [next]="email" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #email label="Correo Electrónico" formControlName="email" [back]="phoneNumber" [next]="address" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #address label="Dirección" [required]="true" formControlName="address" [back]="email" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Estado">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-select label="Estado" [required]="true" formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </p-tabpanel>
+
+                <!-- TAB 1 -->
+                <p-tabpanel [value]="1">
+                    <p-fieldset legend="Datos de Inversión">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #investmentCapacity label="Capacidad de Inversión (S/)" [required]="true" formControlName="investmentCapacity" mode="currency" currency="PEN" [min]="0" [next]="preferredRate" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #preferredRate label="Tasa Preferida (%)" formControlName="preferredRate" [min]="0" [max]="100" [maxFractionDigits]="2" [back]="investmentCapacity" [next]="preferredTermMonths" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <ui-input-number #preferredTermMonths label="Plazo Preferido (meses)" formControlName="preferredTermMonths" [min]="1" [back]="preferredRate" [next]="riskTolerance" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-select #riskTolerance label="Tolerancia al Riesgo" formControlName="riskTolerance" [options]="riskToleranceOptions" optionLabel="label" optionValue="value" [back]="preferredTermMonths" [next]="bankName" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Datos Bancarios">
+                        <div class="grid grid-cols-2 gap-5 md:grid-cols-3 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #bankName label="Banco" formControlName="bankName" [back]="riskTolerance" [next]="bankAccount" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <input-text #bankAccount label="Número de Cuenta" formControlName="bankAccount" [back]="bankName" [next]="notes" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+                    <p-fieldset legend="Observaciones">
+                        <div class="grid grid-cols-1 gap-5 mt-3">
+                            <div class="flex flex-col gap-2">
+                                <input-text #notes label="Notas" formControlName="notes" [back]="bankAccount" />
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    </form>
+
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button label="Guardar" icon="pi pi-save" [loading]="saving()" (onClick)="save()" />
+    </div>
+</div>

@@ -12,7 +12,7 @@
             [rowsPerPageOptions]="rowsPerPageOptions"
             [globalFilterFields]="globalFilterFields"
             [scrollable]="true"
-            [tableStyle]="{ 'min-width': minWidth }"
+            [tableStyle]="{ 'min-width': computedTableMinWidth }"
             responsiveLayout="scroll"
         >
             <ng-template #caption>
@@ -44,16 +44,17 @@
 
             <ng-template #header>
                 <tr>
-                    @for (col of columns; track col.field; let i = $index) {
+                    @for (col of columns; track col.field) {
                         <th
+                            [class]="col.frozen ? 'sticky z-20 bg-surface-0! dark:bg-surface-900! shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
                             scope="col"
+                            alignFrozen="left"
+                            pFrozenColumn
+                            [frozen]="col.frozen ?? false"
                             [pSortableColumn]="col.sortable ? toField(col.field) : undefined"
                             [style.width]="col.width || null"
-                            [style.min-width]="col.width || '10rem'"
-                            [class]="col.frozen ? 'sticky z-20 bg-surface-0! dark:bg-surface-900! shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
-                            [style.left]="col.frozen ? getFrozenLeftOffset(i) : null"
-                            [style.background-color]="col.frozen ? 'var(--surface-100)' : null"
-                            class="py-6!"
+                            [style.min-width]="col.minWidth || '10rem'"
+                            [style.max-width]="col.maxWidth || null"
                         >
                             <div class="flex justify-between items-center">
                                 {{ col.header }}
@@ -65,7 +66,7 @@
                     }
 
                     @if (showActions) {
-                        <th scope="col" class="sticky right-0 z-20" [style.background-color]="'var(--surface-100)'" [style.width]="actionsWidth" [style.min-width]="actionsWidth">Acciones</th>
+                        <th scope="col" alignFrozen="right" pFrozenColumn [style.min-width]="computedActionsWidth">Acciones</th>
                     }
                 </tr>
             </ng-template>
@@ -74,12 +75,17 @@
                 <tr>
                     @for (col of columns; track col.field; let i = $index) {
                         <td
-                            [class]="col.frozen ? 'sticky z-10 shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
-                            [style.left]="col.frozen ? getFrozenLeftOffset(i) : null"
-                            [style.background-color]="col.frozen ? 'var(--surface-card)' : null"
+                            [class]="col.frozen ? 'sticky z-20 bg-surface-0! dark:bg-surface-900! shadow-[1px_0_0_0_rgba(0,0,0,0.05)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.05)]' : ''"
+                            [alignFrozen]="'left'"
+                            pFrozenColumn
+                            [frozen]="col.frozen ?? false"
                         >
                             @if (col.type === 'tag') {
                                 <p-tag [value]="getTagData(col, row).value" [severity]="getTagData(col, row).severity" />
+                            } @else if (col.type === 'icon') {
+                                <span class="flex justify-center w-full">
+                                    <i [class]="getIconData(col, row).icon" [style.color]="getIconColor(getIconData(col, row).severity)"></i>
+                                </span>
                             } @else if (col.type === 'custom' && col.cellTemplate) {
                                 <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }" />
                             } @else {
@@ -89,11 +95,11 @@
                     }
 
                     @if (showActions) {
-                        <td class="sticky right-0 z-10" [style.background-color]="'var(--surface-card)'">
-                            <div class="flex items-center justify-center gap-1">
+                        <td alignFrozen="right" pFrozenColumn>
+                            <div class="flex justify-center gap-2">
                                 @for (btn of rowButtons; track btn.key) {
                                     @if (isVisible(btn.visible, row)) {
-                                        <ui-button [icon]="btn.icon" [rounded]="true" [text]="true" [disabled]="isDisabled(btn.disabled, row)" (buttonClick)="onRowAction(btn.key, row)" />
+                                        <ui-button size="small" [icon]="btn.icon" [severity]="btn.severity" [rounded]="true" [outlined]="true" [disabled]="isDisabled(btn.disabled, row)" (buttonClick)="onRowAction(btn.key, row)" />
                                     }
                                 }
                             </div>

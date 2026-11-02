@@ -1,0 +1,102 @@
+<div class="card card-full flex flex-col" *ngIf="loan() as l">
+    <page-header title="Crédito {{ l.loanNumber }}" [subtitle]="'Detalle del crédito'" icon="pi pi-wallet" />
+
+    <p-tabs [value]="0">
+        <p-tablist>
+            <p-tab [value]="0">Resumen</p-tab>
+            <p-tab [value]="1">Cronograma de pagos</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <!-- TAB 0: Resumen -->
+            <p-tabpanel [value]="0">
+                <p-fieldset legend="Información del crédito">
+                    <div class="grid grid-cols-2 gap-5 md:grid-cols-4 mt-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Monto</span>
+                            <span class="text-lg font-bold">{{ formatCurrency(l.principalAmount) }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Tasa anual</span>
+                            <span class="text-lg font-bold">{{ l.interestRate }}%</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Plazo</span>
+                            <span class="text-lg font-bold">{{ l.termMonths }} meses</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Frecuencia</span>
+                            <span class="text-lg font-bold">{{ l.paymentFrequency }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Fecha inicio</span>
+                            <span class="text-lg font-bold">{{ l.startDate }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Fecha fin</span>
+                            <span class="text-lg font-bold">{{ l.endDate ?? '—' }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Interés total</span>
+                            <span class="text-lg font-bold">{{ formatCurrency(l.totalInterest) }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Total a pagar</span>
+                            <span class="text-lg font-bold">{{ formatCurrency(l.totalToPay) }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Estado</span>
+                            <p-tag [value]="l.status ?? '—'" [severity]="getSeverity(l.status)" />
+                        </div>
+                        <div class="flex flex-col md:col-span-3">
+                            <span class="text-sm text-gray-500">Garantía</span>
+                            <span class="text-lg font-bold">{{ l.guaranteeType ?? '—' }} {{ l.guaranteeDescription ? '- ' + l.guaranteeDescription : '' }}</span>
+                        </div>
+                    </div>
+                </p-fieldset>
+            </p-tabpanel>
+
+            <!-- TAB 1: Cronograma -->
+            <p-tabpanel [value]="1">
+                <p-fieldset legend="Cronograma de pagos">
+                    <p-table [value]="installments()" [loading]="loading()" styleClass="p-datatable-sm mt-3" [paginator]="installments().length > 12" [rows]="12">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>N°</th>
+                                <th>Vencimiento</th>
+                                <th>Capital</th>
+                                <th>Interés</th>
+                                <th>Cuota</th>
+                                <th>Pagado</th>
+                                <th>Días atraso</th>
+                                <th>Estado</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-i>
+                            <tr>
+                                <td>{{ i.installmentNumber }}</td>
+                                <td>{{ i.dueDate }}</td>
+                                <td>{{ formatCurrency(i.principalAmount) }}</td>
+                                <td>{{ formatCurrency(i.interestAmount) }}</td>
+                                <td class="font-bold">{{ formatCurrency(i.totalAmount) }}</td>
+                                <td>{{ formatCurrency(i.paidAmount) }}</td>
+                                <td>
+                                    <span [class.text-red-500]="(i.daysLate ?? 0) > 0">{{ i.daysLate ?? 0 }}</span>
+                                </td>
+                                <td><p-tag [value]="i.status ?? '—'" [severity]="getSeverity(i.status)" /></td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-gray-500">Sin cuotas generadas</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-fieldset>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
+
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t">
+        <p-button label="Volver" icon="pi pi-arrow-left" severity="secondary" [text]="true" (onClick)="goBack()" />
+    </div>
+</div>

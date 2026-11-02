@@ -1,0 +1,39 @@
+@if (label() && showLabel()) {
+    <label class="flex items-center gap-1 mb-2" [attr.for]="id() || null">
+        <span>{{ label() }}</span>
+        @if (required()) {
+            <span class="text-red-500">*</span>
+        }
+    </label>
+}
+
+<p-select
+    #selectEl
+    [inputId]="id() || undefined"
+    [options]="options()"
+    [optionLabel]="optionLabel()"
+    [optionValue]="optionValue()"
+    [placeholder]="placeholder()"
+    [disabled]="isDisabled"
+    [filter]="filter()"
+    [filterBy]="filterBy() ?? optionLabel()"
+    [showClear]="showClear()"
+    [loading]="loading()"
+    [emptyMessage]="emptyMessage()"
+    [appendTo]="appendTo()"
+    [readonly]="readonly()"
+    [scrollHeight]="scrollHeight()"
+    [ngClass]="setNgClass()"
+    [class.ng-invalid]="(submitted() || isInvalid) && validatorMessage()"
+    [class.ng-dirty]="(submitted() || isInvalid) && validatorMessage()"
+    styleClass="w-full"
+    [(ngModel)]="value"
+    (onChange)="onSelectChange($event.value)"
+    (onBlur)="onSelectBlur()"
+    (onShow)="panelOpen.set(true)"
+    (onHide)="panelOpen.set(false)"
+    (keydown.enter)="$event.stopPropagation(); enterKeyUp()"
+    (keyup.ArrowLeft)="arrowLeftKeyUp()"
+/>
+
+<error-message [label]="label()" [controls]="controls" [validatorMessage]="validatorMessage()" [isInvalid]="submitted() || isInvalid"></error-message>

@@ -1,0 +1,16 @@
+<div class="card card-full">
+    <page-header title="Créditos" [subtitle]="subtitle" icon="pi pi-wallet" />
+
+    <ui-table-customizable
+        [data]="data()"
+        [columns]="columns"
+        [rowButtons]="rowButtons()"
+        [globalFilterFields]="globalFilterFields"
+        [showAddButton]="!!addButton"
+        [loading]="loading()"
+        [dataKey]="dataKey"
+        [showActions]="actions().length > 0"
+        (onAdd)="onAdd()"
+        (rowAction)="onRowAction($event)"
+    />
+</div>

@@ -3,7 +3,6 @@
     <div class="flex flex-col items-center justify-center w-full px-4 py-6 lg:py-10">
         <div class="w-full max-w-6xl">
             <div class="grid overflow-hidden rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm bg-surface-0 dark:bg-surface-900 lg:grid-cols-2">
-                
                 <!-- CONTENIDO -->
                 <section class="p-6 sm:p-10">
                     <div class="mb-8">
@@ -12,19 +11,13 @@
                         <router-outlet></router-outlet>
                     </div>
 
-                    <div class="text-xs text-surface-500 dark:text-surface-400">
-                        © 2026 Acceso seguro
-                    </div>
+                    <div class="text-xs text-surface-500 dark:text-surface-400">© 2026 Acceso seguro</div>
                 </section>
 
                 <!-- IMAGEN -->
-                <section
-                    class="relative hidden lg:block bg-cover bg-center"
-                    style="background-image: url('assets/images/public/hero.png')"
-                >
+                <section class="relative hidden lg:block bg-cover bg-center" style="background-image: url('assets/images/public/hero.png')">
                     <div class="absolute inset-0 bg-surface-900/10"></div>
                 </section>
-                
             </div>
         </div>
     </div>

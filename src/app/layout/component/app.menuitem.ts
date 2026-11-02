@@ -6,7 +6,7 @@ import { LayoutService } from '@/app/layout/service/layout.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
-    selector: '[app-menuitem]',
+    selector: '[sk-menuitem]',
     imports: [CommonModule, RouterModule, RippleModule],
     template: `
         @if (root() && isVisible()) {
@@ -49,7 +49,7 @@ import { filter } from 'rxjs/operators';
         @if (hasChildren() && isVisible() && (root() || isActive())) {
             <ul [animate.enter]="initialized() ? 'p-submenu-enter' : null" [animate.leave]="'p-submenu-leave'" [class.layout-root-submenulist]="root()">
                 @for (child of item().items; track child?.label) {
-                    <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child['badgeClass']"></li>
+                    <li sk-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child['badgeClass']"></li>
                 }
             </ul>
         }

@@ -54,7 +54,7 @@ import { LayoutService } from '@/app/layout/service/layout.service';
                     >
                         <i class="pi pi-palette"></i>
                     </button>
-                    <app-configurator />
+                    <sk-configurator />
                 </div>
             </div>
 

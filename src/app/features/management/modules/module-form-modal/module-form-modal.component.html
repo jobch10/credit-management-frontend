@@ -1,0 +1,58 @@
+<p-dialog [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true" [closeOnEscape]="true" [style]="{ width: '750px' }" [header]="title()">
+    <form [formGroup]="form" class="p-2">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div class="flex flex-col gap-2">
+                <input-text #name label="Nombre" [required]="true" [submitted]="submitted()" formControlName="name" [next]="code" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #code label="Código" [required]="true" [submitted]="submitted()" formControlName="code" [back]="name" [next]="description" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #description label="Descripción" [submitted]="submitted()" formControlName="description" [back]="code" [next]="type" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select
+                    #type
+                    label="Tipo"
+                    [required]="true"
+                    [submitted]="submitted()"
+                    [disabled]="isTypeDisabled"
+                    formControlName="type"
+                    [options]="typeOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [back]="description"
+                    [next]="showParentSelect ? parentIdRef : icon"
+                    [filter]="false"
+                    (onChange)="onTypeChange()"
+                />
+            </div>
+
+            @if (showParentSelect) {
+                <div class="flex flex-col gap-2">
+                    <input-select #parentId label="Módulo padre" [submitted]="submitted()" formControlName="parentId" [options]="modulesTypeGrupo()" optionLabel="label" optionValue="value" [back]="type" [next]="icon" [filter]="false" />
+                </div>
+            }
+
+            <div class="flex flex-col gap-2">
+                <input-text #icon label="Icono (clase CSS)" [required]="true" [submitted]="submitted()" formControlName="icon" placeholder="fa-solid fa-cube" [back]="showParentSelect ? parentIdRef : type" [next]="route" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #route label="Ruta" [required]="form.get('type')?.value === 'MODULO'" [submitted]="submitted()" [disabled]="form.get('type')?.value === 'GRUPO'" formControlName="route" [back]="icon" [next]="state" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select #state label="Estado" [required]="true" [submitted]="submitted()" formControlName="state" [options]="stateOptions" optionLabel="label" optionValue="value" [back]="route" [filter]="false" />
+            </div>
+        </div>
+    </form>
+
+    <ng-template #footer>
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button [label]="isEdit() ? 'Actualizar' : 'Guardar'" icon="pi pi-check" [loading]="saving()" (onClick)="save()" />
+    </ng-template>
+</p-dialog>

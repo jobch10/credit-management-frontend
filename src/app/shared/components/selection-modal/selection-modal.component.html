@@ -1,0 +1,50 @@
+<p-dialog
+    [visible]="visible()"
+    (visibleChange)="visibleChange.emit($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closable]="!saving()"
+    [closeOnEscape]="!saving()"
+    [dismissableMask]="!saving()"
+    [style]="{ width: '28rem', maxWidth: '90vw' }"
+    [header]="title()"
+>
+    <div class="flex flex-col gap-3">
+        <input pInputText type="text" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="searchPlaceholder()" class="w-full text-sm" [disabled]="saving()" />
+
+        <div class="border border-surface-200 dark:border-surface-700 rounded-md overflow-hidden">
+            <!-- Header seleccionar todo -->
+            <div class="flex items-center gap-2 px-3 py-2 bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
+                <p-checkbox [binary]="true" [ngModel]="allFilteredChecked()" [indeterminate]="someFilteredChecked()" [disabled]="saving()" (onChange)="toggleAllFiltered($event.checked)" />
+                <span class="font-medium text-sm">{{ itemLabel() }}</span>
+            </div>
+
+            <!-- Lista -->
+            <div class="max-h-[320px] overflow-y-auto">
+                @if (filteredOptions().length) {
+                    @for (option of filteredOptions(); track trackByValue($index, option)) {
+                        <div
+                            class="flex items-center gap-2 px-3 py-2 border-b border-surface-100 dark:border-surface-800 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition cursor-pointer"
+                            [class.bg-primary-100]="option.checked"
+                            [class.dark:bg-primary-900]="option.checked"
+                            (click)="toggleOption(option, !option.checked)"
+                        >
+                            <p-checkbox [binary]="true" [ngModel]="option.checked" [disabled]="saving()" (onChange)="toggleOption(option, $event.checked)" (click)="$event.stopPropagation()" />
+                            <span class="text-sm">{{ option.label }}</span>
+                        </div>
+                    }
+                } @else {
+                    <div class="px-4 py-6 text-center text-sm text-surface-400">
+                        {{ emptyMessage() }}
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancelar" severity="secondary" [text]="true" [disabled]="saving()" (onClick)="onCancel()" />
+        <p-button label="Guardar" icon="pi pi-check" [loading]="saving()" [disabled]="saving()" (onClick)="onSave()" />
+    </ng-template>
+</p-dialog>

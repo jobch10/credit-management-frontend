@@ -1,3 +1,26 @@
-<p>
-  modules works!
-</p>
+<div class="card card-full">
+    <page-header [title]="module()?.name" [subtitle]="subtitle" [icon]="module()?.icon" />
+
+    <ui-table-customizable
+        [data]="data()"
+        [columns]="columns"
+        [rowButtons]="rowButtons()"
+        [globalFilterFields]="globalFilterFields"
+        [showAddButton]="!!addButton"
+        [loading]="loading()"
+        [dataKey]="dataKey"
+        [showActions]="actions().length > 0"
+        (onAdd)="onAdd()"
+        (rowAction)="onRowAction($event)"
+    />
+</div>
+<app-module-form-modal [(visible)]="formVisible" [id]="editingId()" (saved)="onSaved()" />
+<ui-selection-modal
+    [(visible)]="assignActionsVisible"
+    [title]="'Asignar acciones'"
+    [itemLabel]="'Acción'"
+    [options]="assignActionsOptions()"
+    [selectedValues]="assignActionsSelected()"
+    [saving]="assignActionsSaving()"
+    (save)="onAssignActionsSave($event)"
+/>

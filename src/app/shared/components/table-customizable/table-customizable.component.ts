@@ -10,22 +10,21 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { ButtonComponent } from '../button/button.component';
-import { EnumTagSeverity, TableColumn, TableHeaderButton, TableRowButton, TableTagData } from './interfaces/table-customizable.interfaces';
+import { EnumTagSeverity, TableColumn, TableHeaderButton, TableIconData, TableRowButton, TableTagData } from './interfaces/table-customizable.interfaces';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
     selector: 'ui-table-customizable',
     templateUrl: './table-customizable.component.html',
     styleUrls: ['./table-customizable.component.scss'],
-    imports: [CommonModule, FormsModule, TableModule, ButtonComponent, TagModule, InputTextModule, IconFieldModule, InputIconModule, TooltipModule]
+    imports: [CommonModule, FormsModule, TableModule, ButtonComponent, TagModule, InputTextModule, IconFieldModule, InputIconModule, TooltipModule, ButtonModule]
 })
-export class TableCustomizableComponen<T = any> {
+export class TableCustomizableComponent<T = any> {
+    // ============ INPUTS ============
     @Input() data: T[] = [];
     @Input() columns: TableColumn<T>[] = [];
     @Input() rowButtons: TableRowButton<T>[] = [];
-
-    // Ahora soporta múltiples botones en el header (Agregar, Eliminar, Exportar, etc.)
     @Input() headerButtons: TableHeaderButton[] = [];
-    // Slot libre para lo que no encaje en headerButtons (dropdowns, date pickers, etc.)
     @Input() headerExtraTemplate: TemplateRef<any> | null = null;
 
     @Input() loading = false;
@@ -37,19 +36,37 @@ export class TableCustomizableComponen<T = any> {
     @Input() showAddButton = false;
     @Input() showActions = true;
 
-    // Ancho fijo de la columna de acciones (para calcular el "right" de sticky)
-    @Input() actionsWidth = '4rem';
-    // Ancho mínimo total de la tabla, fuerza el scroll horizontal en las columnas no-frozen
-    @Input() minWidth = '75rem';
-
-    @Output() addClick = new EventEmitter<void>();
+    @Output() onAdd = new EventEmitter<void>();
     @Output() headerButtonClick = new EventEmitter<string>();
     @Output() rowAction = new EventEmitter<{ action: string; row: T }>();
 
     searchValue = '';
 
+    private static readonly SEVERITY_COLOR: Record<EnumTagSeverity, string> = {
+        [EnumTagSeverity.SUCCESS]: 'var(--p-green-500)',
+        [EnumTagSeverity.DANGER]: 'var(--p-red-500)',
+        [EnumTagSeverity.WARN]: 'var(--p-amber-500)',
+        [EnumTagSeverity.INFO]: 'var(--p-sky-500)',
+        [EnumTagSeverity.SECONDARY]: 'var(--p-surface-500)',
+        [EnumTagSeverity.CONTRAST]: 'var(--p-surface-900)'
+    };
+
+    get computedTableMinWidth(): string {
+        const cols = this.columns.reduce((sum, col) => {
+            const w = col.minWidth || col.width || '10rem';
+            return sum + this.remToNumber(w);
+        }, 0);
+        const actions = this.showActions ? this.remToNumber(this.computedActionsWidth) : 0;
+        return `${cols + actions}rem`;
+    }
+
+    private remToNumber(value: string): number {
+        const n = parseFloat(value.match(/[\d.]+/)?.[0] ?? '10');
+        return value.includes('px') ? n / 16 : n;
+    }
+
     onAddClick() {
-        this.addClick.emit();
+        this.onAdd.emit();
     }
 
     onHeaderButtonClick(btn: TableHeaderButton): void {
@@ -90,21 +107,20 @@ export class TableCustomizableComponen<T = any> {
         };
     }
 
-    getFrozenLeftOffset(index: number): string {
-        let offset = 0;
-        for (let i = 0; i < index; i++) {
-            if (this.columns[i].frozen) {
-                offset += this.parseWidth(this.columns[i].width);
-            }
-        }
-        return `${offset}px`;
+    get computedActionsWidth(): string {
+        const visibleButtonsCount = this.rowButtons.filter((b) => b.visible !== false).length;
+        return `${visibleButtonsCount * 2 + 1}rem`;
     }
 
-    private parseWidth(width?: string): number {
-        if (!width) return 160; // fallback ~10rem en px
-        const match = width.match(/(\d+(\.\d+)?)/);
-        if (!match) return 160;
-        const value = parseFloat(match[0]);
-        return width.includes('rem') ? value * 16 : value;
+    getIconData(column: TableColumn<T>, row: T): TableIconData {
+        if (column.iconConfig) return column.iconConfig(row);
+        return {
+            icon: String(this.getNestedValue(row, String(column.field)) ?? ''),
+            severity: EnumTagSeverity.SECONDARY
+        };
+    }
+
+    getIconColor(severity: EnumTagSeverity): string {
+        return TableCustomizableComponent.SEVERITY_COLOR[severity];
     }
 }

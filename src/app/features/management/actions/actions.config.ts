@@ -1,3 +1,4 @@
+import { EnumTagSeverity, TableColumn } from '@/app/shared/components/table-customizable/interfaces/table-customizable.interfaces';
 import { Action } from '../../../shared/interfaces/config';
 
 export const ACCIONES_CONFIG = {
@@ -9,24 +10,27 @@ export const ACCIONES_CONFIG = {
 
     globalFilterFields: ['code', 'name', 'state'],
 
-    // columns: [
-    //     { field: 'code', header: 'Código', sortable: true },
-    //     { field: 'name', header: 'Nombre', sortable: true },
-    //     {
-    //         field: 'state',
-    //         header: 'Estado',
-    //         type: 'tag',
-    //         tagConfig: (row: Action) => ({
-    //             value: row.state ? 'Activo' : 'Inactivo',
-    //             severity: row.state ? EnumTagSeverity.SUCCESS : EnumTagSeverity.DANGER
-    //         })
-    //     }
-    // ] as TableColumn<Action>[]
-};
-
-export const ACCIONES_FORM = {
-    createTitle: 'Agregar acción',
-    editTitle: 'Editar acción',
-    createIconClass: 'fa-solid fa-user-plus',
-    editIconClass: 'fa-solid fa-user-pen'
+    columns: [
+        { field: 'code', header: 'Código', sortable: true },
+        { field: 'name', header: 'Nombre', sortable: true },
+        {
+            field: 'icon',
+            header: 'Icono',
+            type: 'icon',
+            frozen: false,
+            iconConfig: (row: Action) => ({
+                icon: row.icon ?? 'pi pi-question-circle',
+                severity: row.color
+            })
+        },
+        {
+            field: 'state',
+            header: 'Estado',
+            type: 'tag',
+            tagConfig: (row: Action) => ({
+                value: row.state ? 'Activo' : 'Inactivo',
+                severity: row.state ? EnumTagSeverity.SUCCESS : EnumTagSeverity.DANGER
+            })
+        }
+    ] as TableColumn<Action>[]
 };

@@ -1,0 +1,37 @@
+@if (label() && showLabel()) {
+    <label class="flex items-center gap-1 mb-2" [attr.for]="id() || null">
+        <span>{{ label() }}</span>
+        @if (required()) {
+            <span class="text-red-500">*</span>
+        }
+    </label>
+}
+
+<p-inputnumber
+    #inputEl
+    styleClass="w-full"
+    [inputId]="id() || undefined"
+    [placeholder]="placeholder()"
+    [disabled]="isDisabled"
+    [readonly]="readonly()"
+    [ngClass]="setNgClass()"
+    [class.ng-invalid]="(submitted() || isInvalid) && validatorMessage()"
+    [class.ng-dirty]="(submitted() || isInvalid) && validatorMessage()"
+    [mode]="mode()"
+    [currency]="currency() ?? undefined"
+    [min]="min() ?? null"
+    [max]="max() ?? null"
+    [showButtons]="showButtons()"
+    [useGrouping]="useGrouping()"
+    [minFractionDigits]="minFractionDigits() ?? null"
+    [maxFractionDigits]="maxFractionDigits() ?? null"
+    [prefix]="prefix() ?? ''"
+    [suffix]="suffix() ?? ''"
+    [(ngModel)]="value"
+    (onInput)="onInput($event.value)"
+    (onBlur)="onBlur(value)"
+    (keydown.enter)="$event.preventDefault(); $event.stopPropagation(); enterKeyUp()"
+    (keyup.ArrowLeft)="arrowLeftKeyUp()"
+></p-inputnumber>
+
+<error-message [label]="label()" [controls]="controls" [validatorMessage]="validatorMessage()" [isInvalid]="submitted() || isInvalid"></error-message>

@@ -1,0 +1,5 @@
+export enum EnumSubjectRole {
+    PRESTATARIO = 'PRESTATARIO',
+    INVERSIONISTA = 'INVERSIONISTA',
+    GARANTE = 'GARANTE'
+}

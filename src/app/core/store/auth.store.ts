@@ -2,9 +2,10 @@ import { AuthenticateResponse, LoginRequest } from '@/app/features/auth/interfac
 import { AuthService } from '@/app/features/auth/services/auth.service';
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { catchError, finalize, map, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, finalize, map, of, startWith, switchMap, tap } from 'rxjs';
 import { PermissionModule, Role, User } from '../../shared/interfaces/config';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export interface AuthState {
     token: string | null;
@@ -35,24 +36,29 @@ const initialState: AuthState = {
 export const AuthStore = signalStore(
     { providedIn: 'root' },
     withState(initialState),
-    withComputed((s) => ({
-        isAuthenticated: computed(() => !!s.token())
-    })),
     withComputed((s) => {
         const router = inject(Router);
+        const currentUrl = toSignal(
+            router.events.pipe(
+                filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+                map(() => router.url),
+                startWith(router.url)
+            ),
+            { initialValue: router.url }
+        );
         return {
             isAuthenticated: computed(() => !!s.token()),
             currentModule: computed(() => {
                 const gruposNivel1 = s.permissionModules() ?? [];
-                const currentUrl = router.url;
+                const url = currentUrl();
                 for (const grupo of gruposNivel1) {
                     if (!grupo.children?.length) continue;
                     for (const nivel2 of grupo.children) {
-                        if (nivel2.route && currentUrl.startsWith(nivel2.route)) {
+                        if (nivel2.route && url.startsWith(nivel2.route)) {
                             return nivel2;
                         }
                         if (nivel2.children?.length) {
-                            const nivel3 = nivel2.children.find((c) => c.route && currentUrl.startsWith(c.route));
+                            const nivel3 = nivel2.children.find((c) => c.route && url.startsWith(c.route));
                             if (nivel3) return nivel3;
                         }
                     }

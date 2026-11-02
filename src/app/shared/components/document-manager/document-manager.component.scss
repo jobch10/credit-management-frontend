@@ -1,0 +1,121 @@
+:host {
+    display: block;
+}
+
+.p-dialog .p-dialog-content {
+    padding: 0;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Nuevos estilos para el area de carga */
+.border-dashed {
+    border-style: dashed;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* Estilos de tarjetas de documentos */
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.shrink-0 {
+    flex-shrink: 0;
+}
+
+/* Mini select for inline editing */
+.mini-select :deep(.ng-select) {
+    min-height: 24px;
+}
+
+.mini-select :deep(.ng-select .ng-select-container) {
+    min-height: 24px;
+    height: 24px;
+    font-size: 10px;
+    border-radius: 4px;
+}
+
+.mini-select :deep(.ng-select .ng-select-container .ng-value-container) {
+    padding-left: 4px;
+}
+
+.mini-select :deep(.ng-select .ng-select-container .ng-value-container .ng-input) {
+    top: 0;
+    padding-left: 4px;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Ensure PrimeNG components fit well */
+:deep(.p-fileupload-basic) {
+    width: auto;
+}
+
+:deep(.p-button.p-button-text) {
+    padding: 0.5rem;
+}

@@ -1,0 +1,30 @@
+<p-dialog [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true" [closeOnEscape]="true" [style]="{ width: '750px' }" [header]="title()">
+    <form [formGroup]="form" class="p-2">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div class="flex flex-col gap-2">
+                <input-text #names label="Nombres" [required]="true" [submitted]="submitted()" formControlName="names" [next]="email" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #email label="Correo electrónico" [required]="true" [submitted]="submitted()" [disabled]="isEdit()" formControlName="email" [back]="names" [next]="username" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-text #username label="Nombre de usuario" [required]="true" [submitted]="submitted()" formControlName="username" [back]="email" [next]="state" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select #state label="Estado" [required]="true" [submitted]="submitted()" formControlName="state" [options]="stateOptions" optionLabel="label" optionValue="value" [back]="username" [next]="role" [filter]="false" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <input-select #role label="Rol" [required]="true" [submitted]="submitted()" formControlName="roleId" [options]="roles" optionLabel="label" optionValue="value" [back]="state" />
+            </div>
+        </div>
+    </form>
+
+    <ng-template #footer>
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [text]="true" (onClick)="onCancel()" />
+        <p-button [label]="isEdit() ? 'Actualizar' : 'Guardar'" icon="pi pi-check" [loading]="saving()" (onClick)="save()" />
+    </ng-template>
+</p-dialog>

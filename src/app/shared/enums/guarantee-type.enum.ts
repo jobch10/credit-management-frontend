@@ -1,0 +1,6 @@
+export enum EnumGuaranteeType {
+    PERSONAL = 'PERSONAL',
+    HIPOTECARIA = 'HIPOTECARIA',
+    MOBILIARIA = 'MOBILIARIA',
+    SIN_GARANTIA = 'SIN_GARANTIA'
+}

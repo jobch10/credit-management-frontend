@@ -1,0 +1,94 @@
+<p-dialog [(visible)]="visible" [header]="title" [modal]="true" [style]="{ width: '70vw' }" [breakpoints]="{ '960px': '85vw', '640px': '95vw' }" [contentStyle]="{ 'max-height': '80vh', overflow: 'auto' }" (onHide)="close()">
+    <div class="flex flex-col h-full max-h-[75vh]">
+        <div class="p-6 pb-0">
+            <div class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-primary" (dragover)="$event.preventDefault()" (drop)="onFilesDropped($event)" (click)="triggerFileSelect()">
+                <input #fileInput type="file" multiple hidden (change)="onFileSelected($event)" />
+
+                <i class="pi pi-cloud-upload text-3xl mb-2"></i>
+
+                <p class="font-bold">Cargar Archivos Adjuntos por Tipo Documento</p>
+                <p class="text-sm text-gray-500">Presiona aquí o arrastra archivos</p>
+
+                <div class="mt-4 flex flex-wrap gap-2 justify-center" (click)="$event.stopPropagation()">
+                    <input-select [(ngModel)]="selectedDocumentTypeId" [options]="documentTypes()" optionLabel="label" optionValue="value" [showClear]="true" [filter]="true" />
+
+                    <button type="button" class="p-button p-component p-button-outlined p-button-sm" (click)="openManageTypesDialog()">
+                        <i class="pi pi-cog"></i>
+                        <span class="ml-1">Tipos</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6">
+            <h3 class="font-bold mb-3">Documentos ({{ documents().length }})</h3>
+
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let doc of documents(); trackBy: trackByDoc" class="border rounded-lg p-4 hover:shadow transition">
+                    <div class="flex gap-3">
+                        <i [class]="getFileIcon(doc.fileName)"></i>
+
+                        <div class="flex-1 min-w-0">
+                            <p class="truncate font-bold">
+                                {{ doc.fileName }}
+                            </p>
+
+                            <div *ngIf="editingDocId !== doc.id; else editTpl">
+                                <span class="text-xs text-primary">
+                                    {{ getDocumentTypeLabel(doc.documentType) }}
+                                </span>
+
+                                <button pButton icon="pi pi-pencil" [text]="true" (click)="startEdit(doc)"></button>
+                            </div>
+
+                            <ng-template #editTpl>
+                                <div class="flex gap-1">
+                                    <input-select [ngModel]="editingDocumentTypeId()" (ngModelChange)="editingDocumentTypeId.set($event)" [options]="documentTypes()" optionLabel="label" optionValue="value" />
+
+                                    <button pButton icon="pi pi-check" [text]="true" severity="success" (click)="saveEdit(doc)"></button>
+                                    <button pButton icon="pi pi-times" [text]="true" severity="danger" (click)="cancelEdit()"></button>
+                                </div>
+                            </ng-template>
+
+                            <p class="text-xs text-gray-400">
+                                {{ doc.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-1 mt-3">
+                        <p-button icon="pi pi-download" [text]="true" (click)="openDownloadMenu($event, doc)" />
+                        <p-button icon="pi pi-trash" severity="danger" [text]="true" (click)="deleteDocument(doc)" />
+                    </div>
+                </div>
+
+                <div *ngIf="loading()" class="col-span-full text-center py-10">
+                    <i class="pi pi-spin pi-spinner"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cerrar" (click)="close()" />
+    </ng-template>
+</p-dialog>
+
+<sc-document-type-form [(visible)]="showAddTypeDialog" (save)="onDocumentTypeFormSave($event)"></sc-document-type-form>
+
+<p-dialog header="Gestionar Tipos de Documento" [(visible)]="showManageTypesDialog" [modal]="true" [style]="{ width: '50vw' }" [breakpoints]="{ '960px': '85vw', '640px': '95vw' }" (onHide)="closeManageTypesDialog()">
+    <div class="flex justify-end mb-4">
+        <p-button label="Agregar" icon="pi pi-plus" (onClick)="openAddDocumentTypeDialog()" />
+    </div>
+    <ui-table-customizable
+        [data]="(rawDocumentTypes$ | async) || []"
+        [columns]="documentTypesTableColumns"
+        [rowButtons]="documentTypesTableRowButtons"
+        [showAddButton]="false"
+        [loading]="documentTypesLoading()"
+        (rowAction)="onDocumentTypeAction($event)"
+    >
+    </ui-table-customizable>
+</p-dialog>
+
+<p-menu #menu [model]="downloadMenuItems" [popup]="true"></p-menu>

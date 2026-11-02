@@ -3,13 +3,15 @@
     <ui-table-customizable
         [data]="data()"
         [columns]="columns"
-        [rowButtons]="rowButtons"
+        [rowButtons]="rowButtons()"
         [globalFilterFields]="globalFilterFields"
-        [showAddButton]="true"
+        [showAddButton]="!!addButton"
         [loading]="loading()"
         [dataKey]="dataKey"
-        [showActions]="true"
-        (headerButtonClick)="onHeaderButtonClick($event)"
+        [showActions]="actions().length > 0"
+        (onAdd)="onAdd()"
         (rowAction)="onRowAction($event)"
     />
+
+    <app-accion-form-modal [(visible)]="modalVisible" [id]="editingId()" (saved)="onModalSaved()" />
 </div>

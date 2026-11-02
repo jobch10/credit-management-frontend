@@ -1,0 +1,6 @@
+export enum EnumEmploymentType {
+    DEPENDIENTE = 'DEPENDIENTE',
+    INDEPENDIENTE = 'INDEPENDIENTE',
+    JUBILADO = 'JUBILADO',
+    DESEMPLEADO = 'DESEMPLEADO'
+}

@@ -1,19 +1,24 @@
-import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { SelectOption } from '@/app/shared/interfaces/selects';
+import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { TypeDocument } from '../../shared/interfaces/person';
-import { ApiResponse } from '../models';
+import { TypeDocument } from '../../shared/interfaces/actors';
+import { GenericService } from './generic.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
-export class TypeDocumentService {
-    private readonly _url = `${environment.apiUrl}/type-documents`
-    
-    private readonly _http = inject(HttpClient);
+export class TypeDocumentService extends GenericService<TypeDocument, number> {
+    protected override endpoint = 'type-documents';
 
-    findAll(): Observable<TypeDocument[]> {
-      return this._http.get<ApiResponse<TypeDocument[]>>(`${this._url}/all`).pipe(map(res => res.data));
+    findAllOptions(): Observable<SelectOption<TypeDocument>[]> {
+        return this.findAll().pipe(map((types) => this.mapTypeDocumentToSelectOptions(types)));
+    }
+
+    private mapTypeDocumentToSelectOptions(types: TypeDocument[]): SelectOption<TypeDocument>[] {
+        return types.map((type) => ({
+            ...type,
+            label: `${type.code} - ${type.name}`,
+            value: type.id
+        }));
     }
 }

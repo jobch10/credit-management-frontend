@@ -1,8 +1,12 @@
-import { AuthStore } from '@/app/core/store/auth.store';
+import { ActionService } from '@/app/core/services/action.service';
+import { CrudPageBase } from '@/app/shared/class/CrudPageBase';
 import { PageHeaderComponent } from '@/app/shared/components/page-header/page-header.component';
-import { EnumTagSeverity, TableColumn, TableHeaderButton, TableRowButton } from '@/app/shared/components/table-customizable/interfaces/table-customizable.interfaces';
-import { TableCustomizableComponen } from '@/app/shared/components/table-customizable/table-customizable.component';
-import { Component, computed, inject, signal } from '@angular/core';
+import { TableCustomizableComponent } from '@/app/shared/components/table-customizable/table-customizable.component';
+import { EnumAction } from '@/app/shared/enums';
+import { Action } from '@/app/shared/interfaces/config';
+import { Component, inject, signal } from '@angular/core';
+import { ACCIONES_CONFIG } from './actions.config';
+import { AccionFormModalComponent } from './accion-form-modal/accion-form-modal.component';
 
 interface DemoRow {
     id: number;
@@ -14,55 +18,56 @@ interface DemoRow {
 @Component({
     selector: 'app-actions',
     templateUrl: './actions.component.html',
-    imports: [PageHeaderComponent, TableCustomizableComponen]
+    imports: [PageHeaderComponent, TableCustomizableComponent, AccionFormModalComponent]
 })
-export class ActionsComponent {
-    private readonly _authStore = inject(AuthStore);
+export class ActionsComponent extends CrudPageBase<Action> {
+    private readonly _actionService = inject(ActionService);
 
-    readonly module = computed(() => this._authStore.currentModule());
+    dataKey = ACCIONES_CONFIG.dataKey;
+    globalFilterFields = ACCIONES_CONFIG.globalFilterFields;
+    columns = ACCIONES_CONFIG.columns;
     subtitle = 'Listado';
 
-    data = signal<DemoRow[]>([
-        { id: 1, code: 'ACC-001', name: 'Crear usuario', state: true },
-        { id: 2, code: 'ACC-002', name: 'Editar usuario', state: true },
-        { id: 3, code: 'ACC-003', name: 'Eliminar usuario', state: false },
-        { id: 4, code: 'ACC-004', name: 'Exportar reporte', state: true },
-        { id: 5, code: 'ACC-005', name: 'Ver auditoría', state: false }
-    ]);
+    //Modal
+    modalVisible = signal(false);
+    editingId = signal<number | null>(null);
 
-    loading = signal(false);
-    dataKey = 'id';
-    globalFilterFields = ['code', 'name'];
+    constructor() {
+        super();
+        this.initCrud();
+    }
 
-    columns: TableColumn<DemoRow>[] = [
-        { field: 'code', header: 'Código', sortable: true, frozen: true, width: '6rem' },
-        { field: 'name', header: 'Nombre', sortable: true, frozen: false, width: '10rem' },
-        {
-            field: 'state',
-            header: 'Estado',
-            type: 'tag',
-            width: '10rem',
-            tagConfig: (row: DemoRow) => ({
-                value: row.state ? 'Activo' : 'Inactivo',
-                severity: row.state ? EnumTagSeverity.SUCCESS : EnumTagSeverity.DANGER
-            })
-        }
-    ];
+    protected loadFn() {
+        return this._actionService.findAll();
+    }
 
-    headerButtons: TableHeaderButton[] = [{ key: 'add', label: 'Agregar', icon: 'pi pi-plus', severity: 'contrast' }];
+    protected override deleteFn(id: number) {
+        return this._actionService.delete(id);
+    }
 
-    rowButtons: TableRowButton<DemoRow>[] = [
-        { key: 'edit', icon: 'pi pi-pencil', tooltip: 'Editar', color: '#F59E0B' },
-        { key: 'delete', icon: 'pi pi-trash', tooltip: 'Eliminar', color: '#EF4444' }
-    ];
+    protected override getDeleteMessage(row: Action): string {
+        return `¿Está seguro de que desea eliminar la acción ${row.name}?`;
+    }
 
-    onHeaderButtonClick(key: string): void {
-        if (key === 'add') {
-            console.log('Agregar nueva acción');
+    override onAdd(): void {
+        this.editingId.set(null);
+        this.modalVisible.set(true);
+    }
+
+    protected mapRowActions(event: { action: string; row: Action }): void {
+        switch (event.action) {
+            case EnumAction.EDITAR:
+                this.editingId.set(event.row.id ?? null);
+                this.modalVisible.set(true);
+                break;
+            case EnumAction.ELIMINAR:
+                this.deleteRow(event.row);
+                break;
         }
     }
 
-    onRowAction(event: { action: string; row: DemoRow }): void {
-        console.log('row action', event);
+    onModalSaved(): void {
+        this.modalVisible.set(false);
+        this.initCrud();
     }
 }
